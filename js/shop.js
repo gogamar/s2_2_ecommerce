@@ -142,7 +142,28 @@ function printCart() {
 // ** Nivell II **
 
 // Exercise 7
-function removeFromCart(id) {}
+function removeFromCart(id) {
+  const product = cart.find((item) => item.id === id);
+
+  console.log("Product quantity before removal/modification:", product.quantity);
+
+  if (!product) {
+    console.log("Product not found in the cart.");
+    return;
+  }
+
+  if (product.quantity > 1) {
+    product.quantity--;
+    console.log("Product quantity updated:", product.quantity);
+  } else {
+    const productIndex = cart.indexOf(product);
+    cart.splice(productIndex, 1);
+  }
+
+  applyPromotionsCart(cart);
+
+  console.log("Updated cart:", cart);
+}
 
 function open_modal() {
   printCart();
