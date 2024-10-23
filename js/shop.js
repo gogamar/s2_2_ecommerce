@@ -78,10 +78,11 @@ function calculateTotal() {
   total = 0;
 
   for (let i = 0; i < cart.length; i++) {
-    total += cart[i].price * cart[i].quantity;
+    let subtotal = cart[i].subtotalWithDiscount !== undefined ? cart[i].subtotalWithDiscount : cart[i].price * cart[i].quantity;
+    total += subtotal;
   }
 
-  console.log("Total price:", total);
+  console.log("Total price:", total.toFixed(2));
 }
 
 // Exercise 4
@@ -106,6 +107,36 @@ function applyPromotionsCart(cart) {
 // Exercise 5
 function printCart() {
   // Fill the shopping cart modal manipulating the shopping cart dom
+  const cartList = document.getElementById("cart_list");
+  const cartTotal = document.getElementById("total_price");
+
+  cartList.innerHTML = "";
+
+  for (let i = 0; i < cart.length; i++) {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("th");
+    nameCell.scope = "row";
+    nameCell.textContent = cart[i].name;
+
+    const priceCell = document.createElement("td");
+    priceCell.textContent = `$${cart[i].price.toFixed(2)}`;
+
+    const quantityCell = document.createElement("td");
+    quantityCell.textContent = cart[i].quantity;
+
+    const totalCell = document.createElement("td");
+    const subtotal = cart[i].subtotalWithDiscount || (cart[i].price * cart[i].quantity).toFixed(2);
+    totalCell.textContent = `$${subtotal}`;
+
+    row.appendChild(nameCell);
+    row.appendChild(priceCell);
+    row.appendChild(quantityCell);
+    row.appendChild(totalCell);
+
+    cartList.appendChild(row);
+  }
+  cartTotal.textContent = total.toFixed(2);
 }
 
 // ** Nivell II **
