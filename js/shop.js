@@ -85,8 +85,22 @@ function calculateTotal() {
 }
 
 // Exercise 4
-function applyPromotionsCart() {
+function applyPromotionsCart(cart) {
   // Apply promotions to each item in the array "cart"
+
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].offer) {
+      let discountedPrice;
+      const { number, percent } = cart[i].offer;
+
+      if (cart[i].quantity >= number) {
+        discountedPrice = cart[i].price * ((100 - percent) / 100);
+      }
+      cart[i].subtotalWithDiscount = parseFloat((discountedPrice * cart[i].quantity).toFixed(2));
+    }
+  }
+
+  console.log("Cart after promotions:", cart);
 }
 
 // Exercise 5
