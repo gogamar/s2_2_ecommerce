@@ -26,8 +26,8 @@ loadProducts();
 // ** Don't hesitate to seek help from your peers or your mentor if you still struggle with debugging.
 
 // Improved version of cartList. Cart is an array of products (objects), but each one has a quantity field to define its quantity, so these products are not repeated.
-const cart = [];
-const total = 0;
+let cart = [];
+let total = 0;
 
 // Exercise 1
 function buy(id) {
@@ -65,7 +65,11 @@ function buy(id) {
 }
 
 // Exercise 2
-function cleanCart() {}
+function cleanCart() {
+  cart = [];
+  total = 0;
+  console.log("Cart has been cleared.", cart);
+}
 
 // Exercise 3
 function calculateTotal() {
