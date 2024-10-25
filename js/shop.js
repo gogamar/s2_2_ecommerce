@@ -1,170 +1,208 @@
-// If you have time, you can move this variable "products" to a json or js file and load the data in this js. It will look more professional
-let products = [];
+export const Shop = {
+  products: [],
+  cart: [],
+  total: 0,
 
-function loadProducts() {
-  fetch("../data/products.json")
-    .then((response) => {
+  async loadProducts() {
+    try {
+      const response = await fetch("../data/products.json");
       if (!response.ok) {
         throw new Error("Network response not ok");
       }
-      return response.json();
-    })
-    .then((data) => {
-      products = data.products;
-      console.log("Products loaded:", products);
-    })
-    .catch((error) => {
+      const data = await response.json();
+      this.products = data.products;
+      console.log("Products loaded:", this.products);
+      return this.products;
+    } catch (error) {
       console.error("Error loading products:", error);
-    });
-}
-
-loadProducts();
-
-// => Reminder, it's extremely important that you debug your code.
-// ** It will save you a lot of time and frustration!
-// ** You'll understand the code better than with console.log(), and you'll also find errors faster.
-// ** Don't hesitate to seek help from your peers or your mentor if you still struggle with debugging.
-
-// Improved version of cartList. Cart is an array of products (objects), but each one has a quantity field to define its quantity, so these products are not repeated.
-
-let cart = [];
-let total = 0;
-
-// Exercise 1
-function buy(id) {
-  // 1. Loop for to the array products to get the item to add to cart
-  let product;
-  for (let i = 0; i < products.length; i++) {
-    if (products[i].id === id) {
-      product = products[i];
-      break;
     }
-  }
+  },
 
-  if (!product) {
-    console.error("Product not found");
-    return;
-  }
-  console.log("Product found:", product);
+  getProducts() {
+    return this.products;
+  },
 
-  // 2. Add found product to the cart array
-  let cartItem;
+  renderProducts() {
+    const productLists = document.querySelectorAll(".product-list-js");
+    console.log("product lists", productLists);
 
-  for (let n = 0; n < cart.length; n++) {
-    if (cart[n].id === id) {
-      cartItem = cart[n];
-      break;
-    }
-  }
+    productLists.forEach((productList) => {
+      const productType = productList.dataset.productType;
+      console.log("product type", productType);
+      productList.innerHTML = "";
 
-  if (cartItem) {
-    cartItem.quantity++;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-  console.log("Cart updated:", cart);
-}
+      const filteredProducts = this.products.filter((product) => {
+        return product.type === productType;
+      });
 
-// Exercise 2
-function cleanCart() {
-  cart = [];
-  total = 0;
-  console.log("Cart has been cleared.", cart);
-}
+      filteredProducts.forEach((product) => {
+        const productCard = `
+                <div class="col mb-5">
+                    <div class="card h-100">
+                      <div class="image-container">
+                          <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+                      </div>
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <h5 class="fw-bolder">${product.name}</h5>
+                                $${product.price.toFixed(2)}
+                                ${product.offer ? `<div class="text-danger">Offer: Buy ${product.offer.number} for ${product.offer.percent}% off</div>` : ""}
+                            </div>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center">
+                                <button type="button" class="btn btn-outline-dark buy-button-js" data-product-id="${product.id}">Add to cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        productList.innerHTML += productCard;
+      });
 
-// Exercise 3
-function calculateTotal() {
-  // Calculate total price of the cart using the "cartList" array
-  total = 0;
-
-  for (let i = 0; i < cart.length; i++) {
-    let subtotal = cart[i].subtotalWithDiscount !== undefined ? cart[i].subtotalWithDiscount : cart[i].price * cart[i].quantity;
-    total += subtotal;
-  }
-
-  console.log("Total price:", total.toFixed(2));
-}
-
-// Exercise 4
-function applyPromotionsCart(cart) {
-  // Apply promotions to each item in the array "cart"
-
-  for (let i = 0; i < cart.length; i++) {
-    if (cart[i].offer) {
-      let discountedPrice;
-      const { number, percent } = cart[i].offer;
-
-      if (cart[i].quantity >= number) {
-        discountedPrice = cart[i].price * ((100 - percent) / 100);
+      if (filteredProducts.length === 0) {
+        productList.innerHTML = "<p>No products found for this category.</p>";
       }
-      cart[i].subtotalWithDiscount = parseFloat((discountedPrice * cart[i].quantity).toFixed(2));
+    });
+  },
+
+  buy(id) {
+    const product = this.products.find((prod) => prod.id === id);
+
+    if (!product) {
+      console.error("Product not found");
+      return;
     }
-  }
 
-  console.log("Cart after promotions:", cart);
-}
+    console.log("Product found:", product);
+    const cartItem = this.cart.find((item) => item.id === id);
 
-// Exercise 5
-function printCart() {
-  // Fill the shopping cart modal manipulating the shopping cart dom
-  const cartList = document.getElementById("cart_list");
-  const cartTotal = document.getElementById("total_price");
+    if (cartItem) {
+      cartItem.quantity++;
+    } else {
+      this.cart.push({ ...product, quantity: 1 });
+    }
 
-  cartList.innerHTML = "";
+    this.updateProductCount();
+    this.applyPromotionsCart();
+    this.calculateTotal();
+    this.printCart();
+  },
 
-  for (let i = 0; i < cart.length; i++) {
-    const row = document.createElement("tr");
+  updateProductCount() {
+    const totalProducts = this.cart.reduce((total, item) => total + item.quantity, 0);
+    const countProductField = document.getElementById("count_product");
+    countProductField.textContent = totalProducts;
+  },
 
-    const nameCell = document.createElement("th");
-    nameCell.scope = "row";
-    nameCell.textContent = cart[i].name;
+  calculateTotal() {
+    this.total = 0;
 
-    const priceCell = document.createElement("td");
-    priceCell.textContent = `$${cart[i].price.toFixed(2)}`;
+    this.cart.forEach((item) => {
+      const price = parseFloat(item.price);
+      const quantity = parseInt(item.quantity, 10);
+      const subtotal = item.subtotalWithDiscount || price * quantity;
 
-    const quantityCell = document.createElement("td");
-    quantityCell.textContent = cart[i].quantity;
+      this.total += isNaN(price) ? 0 : subtotal;
+    });
 
-    const totalCell = document.createElement("td");
-    const subtotal = cart[i].subtotalWithDiscount || (cart[i].price * cart[i].quantity).toFixed(2);
-    totalCell.textContent = `$${subtotal}`;
+    console.log("Total price:", this.total.toFixed(2));
+    return this.total.toFixed(2);
+  },
 
-    row.appendChild(nameCell);
-    row.appendChild(priceCell);
-    row.appendChild(quantityCell);
-    row.appendChild(totalCell);
+  applyPromotionsCart() {
+    this.cart.forEach((item) => {
+      if (item.offer) {
+        const { number, percent } = item.offer;
+        let discountedPrice = item.price;
 
-    cartList.appendChild(row);
-  }
-  cartTotal.textContent = total.toFixed(2);
-}
+        if (item.quantity >= number) {
+          discountedPrice *= (100 - percent) / 100;
+        }
 
-// ** Nivell II **
+        item.subtotalWithDiscount = parseFloat((discountedPrice * item.quantity).toFixed(2));
+      }
+    });
 
-// Exercise 7
-function removeFromCart(id) {
-  const product = cart.find((item) => item.id === id);
+    console.log("Cart after promotions:", this.cart);
+  },
 
-  console.log("Product quantity before removal/modification:", product.quantity);
+  cleanCart() {
+    this.cart = [];
+    this.total = 0;
+    this.printCart();
+    console.log("Cart has been cleared.", this.cart);
+  },
 
-  if (!product) {
-    console.log("Product not found in the cart.");
-    return;
-  }
+  printCart() {
+    const cartList = document.getElementById("cart_list");
+    const cartTotal = document.getElementById("total_price");
 
-  if (product.quantity > 1) {
-    product.quantity--;
-    console.log("Product quantity updated:", product.quantity);
-  } else {
-    const productIndex = cart.indexOf(product);
-    cart.splice(productIndex, 1);
-  }
+    let cartItemsHTML = "";
+    cartList.innerHTML = "";
 
-  applyPromotionsCart(cart);
+    this.cart.forEach((item) => {
+      const subtotal = item.subtotalWithDiscount || (item.price * item.quantity).toFixed(2);
 
-  console.log("Updated cart:", cart);
-}
+      cartItemsHTML += `
+        <tr>
+          <th scope="row">${item.name}</th>
+          <td>$${item.price.toFixed(2)}</td>
+          <td>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity(${item.id})">
+                <i class="fas fa-minus"></i>
+              </button>
+              <input type="text" class="form-control text-center" value="${item.quantity}" readonly />
+              <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity(${item.id})">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </td>
+          <td>$${subtotal}</td>
+        </tr>
+        `;
+    });
 
-function open_modal() {
-  printCart();
-}
+    cartList.innerHTML = cartItemsHTML;
+    cartTotal.textContent = this.total.toFixed(2);
+
+    this.updateCartVisibility();
+  },
+
+  removeFromCart(id) {
+    const productIndex = this.cart.findIndex((item) => item.id === id);
+
+    if (productIndex >= 0) {
+      const product = this.cart[productIndex];
+
+      if (product.quantity > 1) {
+        product.quantity--;
+        console.log("Product quantity updated:", product.quantity);
+      } else {
+        this.cart.splice(productIndex, 1);
+      }
+
+      this.applyPromotionsCart();
+      this.calculateTotal();
+      console.log("Updated cart:", this.cart);
+    } else {
+      console.log("Product not found in the cart.");
+    }
+  },
+
+  openModal() {
+    this.printCart();
+  },
+
+  updateCartVisibility() {
+    const isCartEmpty = this.cart.length === 0;
+    const shopButton = document.getElementById("shop-btn-js");
+    const checkoutButton = document.getElementById("checkout-btn-js");
+    const cleanCartButton = document.getElementById("cleancart-btn-js");
+
+    shopButton.classList.toggle("d-none", !isCartEmpty);
+    checkoutButton.classList.toggle("d-none", isCartEmpty);
+    cleanCartButton.classList.toggle("d-none", isCartEmpty);
+  },
+};

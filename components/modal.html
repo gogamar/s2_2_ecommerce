@@ -1,0 +1,35 @@
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-cart-arrow-down"></i> My Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h3 class="text-center bill py-4">Shopping Cart</h3>
+
+        <table class="table table-bordered table-striped">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col">Qty.</th>
+              <th scope="col">Total <small>(with discount)</small></th>
+            </tr>
+          </thead>
+          <tbody id="cart_list"></tbody>
+        </table>
+
+        <div class="text-center fs-4 mt-3">
+          <strong>Total: $<span id="total_price">0.00</span></strong>
+        </div>
+
+        <div class="text-center mt-4">
+          <a href="index.html" class="btn btn-outline-secondary m-2" id="shop-btn-js" aria-label="Close">Back to Shop</a>
+          <a href="checkout.html" class="btn btn-success m-2 d-none" id="checkout-btn-js" aria-label="Close">Checkout</a>
+          <a href="javascript:void(0)" class="btn btn-danger m-2 d-none" id="cleancart-btn-js">Clean Cart</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
