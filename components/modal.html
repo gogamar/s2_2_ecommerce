@@ -7,25 +7,36 @@
       </div>
       <div class="modal-body">
         <h3 class="text-center bill py-4">Shopping Cart</h3>
+        <div id="cart-content-js" class="d-none shopping-cart">
+          <!-- test -->
+          <div class="container">
+            <!-- Header Row -->
+            <div class="row bg-light border-bottom">
+              <div class="col fw-light text-muted">Product</div>
+              <div class="col fw-light text-muted">Price</div>
+              <div class="col fw-light text-muted">Qty.</div>
+              <div class="col fw-light text-muted text-success">
+                Total <br />
+                <span class="fw-light fst-italic">with discount</span>
+              </div>
+            </div>
 
-        <table class="table table-bordered table-striped">
-          <thead class="table-light">
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">Qty.</th>
-              <th scope="col">Total <small>(with discount)</small></th>
-            </tr>
-          </thead>
-          <tbody id="cart_list"></tbody>
-        </table>
+            <!-- Cart Items (Body) -->
+            <div id="cart-list"></div>
+          </div>
 
-        <div class="text-center fs-4 mt-3">
-          <strong>Total: $<span id="total_price">0.00</span></strong>
+          <div class="text-center fs-4 mt-3">
+            <strong>Total: $<span id="total-price">0.00</span></strong>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column justify-content-center align-items-center text-center" id="back-to-shop-js">
+          <p class="lead">There is nothing in your shopping cart.</p>
+          <p>Go back to the shop and add some products!</p>
+          <a href="index.html" class="btn btn-primary mt-3">Back to Shop</a>
         </div>
 
         <div class="text-center mt-4">
-          <a href="index.html" class="btn btn-outline-secondary m-2" id="shop-btn-js" aria-label="Close">Back to Shop</a>
           <a href="checkout.html" class="btn btn-success m-2 d-none" id="checkout-btn-js" aria-label="Close">Checkout</a>
           <a href="javascript:void(0)" class="btn btn-danger m-2 d-none" id="cleancart-btn-js">Clean Cart</a>
         </div>

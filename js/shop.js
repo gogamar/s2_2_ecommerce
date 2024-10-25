@@ -18,10 +18,6 @@ export const Shop = {
     }
   },
 
-  getProducts() {
-    return this.products;
-  },
-
   renderProducts() {
     const productLists = document.querySelectorAll(".product-list-js");
     console.log("product lists", productLists);
@@ -73,8 +69,6 @@ export const Shop = {
       console.error("Product not found");
       return;
     }
-
-    console.log("Product found:", product);
     const cartItem = this.cart.find((item) => item.id === id);
 
     if (cartItem) {
@@ -135,37 +129,41 @@ export const Shop = {
   },
 
   printCart() {
-    const cartList = document.getElementById("cart_list");
-    const cartTotal = document.getElementById("total_price");
-
-    let cartItemsHTML = "";
-    cartList.innerHTML = "";
-
+    const cartList = document.getElementById("cart-list");
     this.cart.forEach((item) => {
       const subtotal = item.subtotalWithDiscount || (item.price * item.quantity).toFixed(2);
 
-      cartItemsHTML += `
-        <tr>
-          <th scope="row">${item.name}</th>
-          <td>$${item.price.toFixed(2)}</td>
-          <td>
-            <div class="input-group">
-              <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity(${item.id})">
-                <i class="fas fa-minus"></i>
-              </button>
-              <input type="text" class="form-control text-center" value="${item.quantity}" readonly />
-              <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity(${item.id})">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-          </td>
-          <td>$${subtotal}</td>
-        </tr>
-        `;
-    });
+      let itemRow = cartList.querySelector(`div[data-item-id="${item.id}"]`);
+      if (itemRow) {
+        console.log("item exists");
+        itemRow.querySelector("input.form-control").value = item.quantity;
+        itemRow.querySelector(".subtotal").textContent = `$${subtotal}`;
+      } else {
+        console.log("creating new item");
+        const newRow = document.createElement("div");
+        newRow.setAttribute("data-item-id", item.id);
+        newRow.classList.add("row", "py-2", "border-bottom");
 
-    cartList.innerHTML = cartItemsHTML;
-    cartTotal.textContent = this.total.toFixed(2);
+        newRow.innerHTML = `
+                <div class="col">${item.name}</div>
+                <div class="col">$${item.price.toFixed(2)}</div>
+                <div class="col">
+                    <div class="input-group input-group-sm">
+                        <button type="button" class="btn btn-outline-secondary remove-btn-js" data-product-id="${item.id}" aria-label="Remove item">
+                            <span class="pe-none"><i class="fas fa-minus"></i></span>
+                        </button>
+                        <input type="text" class="form-control text-center" value="${item.quantity}" readonly />
+                        <button type="button" class="btn btn-outline-secondary buy-button-js" data-product-id="${item.id}" aria-label="Add item">
+                            <span class="pe-none"><i class="fas fa-plus"></i></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col subtotal">$${subtotal}</div>
+            `;
+        cartList.appendChild(newRow);
+      }
+      document.getElementById("total-price").textContent = this.total.toFixed(2);
+    });
 
     this.updateCartVisibility();
   },
@@ -183,25 +181,24 @@ export const Shop = {
         this.cart.splice(productIndex, 1);
       }
 
+      this.updateProductCount();
       this.applyPromotionsCart();
       this.calculateTotal();
-      console.log("Updated cart:", this.cart);
+      this.printCart();
     } else {
       console.log("Product not found in the cart.");
     }
   },
 
-  openModal() {
-    this.printCart();
-  },
-
   updateCartVisibility() {
     const isCartEmpty = this.cart.length === 0;
-    const shopButton = document.getElementById("shop-btn-js");
+    const cartContent = document.getElementById("cart-content-js");
+    const backToShop = document.getElementById("back-to-shop-js");
     const checkoutButton = document.getElementById("checkout-btn-js");
     const cleanCartButton = document.getElementById("cleancart-btn-js");
 
-    shopButton.classList.toggle("d-none", !isCartEmpty);
+    cartContent.classList.toggle("d-none", isCartEmpty);
+    backToShop.classList.toggle("d-none", !isCartEmpty);
     checkoutButton.classList.toggle("d-none", isCartEmpty);
     cleanCartButton.classList.toggle("d-none", isCartEmpty);
   },

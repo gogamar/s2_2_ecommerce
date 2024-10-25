@@ -1,24 +1,7 @@
-header {
-  position: relative;
-  background: url("https://img.freepik.com/premium-photo/blue-wall-with-picture-man-woman-it_943617-71181.jpg?w=1480") no-repeat center center/contain;
-  height: 400px;
-  color: white;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-}
-
-header h1 {
-  position: relative;
-  z-index: 2;
-  padding: 20px;
+body {
+  font-family: 'Poppins', sans-serif;
 }
 
 .navbar {
@@ -37,4 +20,60 @@ header h1 {
   max-height: 100%;
   width: auto;
   object-fit: contain;
+}
+
+.carousel-caption h5 {
+  font-size: 1.5rem;
+  /* Adjust font size */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  /* Optional shadow for better contrast */
+}
+
+.carousel-caption p {
+  font-size: 1rem;
+  /* Adjust font size */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  /* Optional shadow for better contrast */
+}
+
+.shopping-cart th {
+  font-size: 0.9rem;
+}
+
+.shopping-cart tr {
+  vertical-align: top;
+}
+
+.nav-link {
+  position: relative;
+  /* Necessary for the pseudo-element positioning */
+  color: #000;
+  /* Change to your desired text color */
+  text-decoration: none;
+  /* Remove default underline */
+}
+
+.nav-link::after {
+  content: "";
+  /* Required for the pseudo-element to appear */
+  position: absolute;
+  left: 50%;
+  /* Start from the middle */
+  bottom: 0;
+  /* Position at the bottom of the text */
+  width: 0;
+  /* Initial width of the underline */
+  height: 2px;
+  /* Thickness of the underline */
+  background-color: #198754;
+  /* Color of the underline (bootstrap success color) */
+  transition: width 0.4s ease, left 0.4s ease;
+  /* Transition effects for smoothness */
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  /* Full width on hover */
+  left: 0;
+  /* Shift to the left */
 }
