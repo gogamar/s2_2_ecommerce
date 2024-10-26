@@ -1,8 +1,6 @@
-// Exercise 6
 function validate() {
   let error = 0;
 
-  // Get the input fields
   const fName = document.getElementById("fName");
   const fLastName = document.getElementById("fLastN");
   const fPhone = document.getElementById("fPhone");
@@ -10,7 +8,6 @@ function validate() {
   const fEmail = document.getElementById("fEmail");
   const fAddress = document.getElementById("fAddress");
 
-  // Get the error elements
   const errorName = document.getElementById("errorName");
   const errorLastN = document.getElementById("errorLastN");
   const errorPhone = document.getElementById("errorPhone");
@@ -26,34 +23,28 @@ function validate() {
     error.textContent = "";
   });
 
-  // Validate first name
   error += validateName(fName, errorName, "First name");
 
-  // Validate last name
   error += validateName(fLastName, errorLastN, "Last name");
 
-  // Validate phone number
   if (fPhone.value.trim() === "" || !/^\d{9}$/.test(fPhone.value)) {
     error++;
     fPhone.classList.add("is-invalid");
     errorPhone.textContent = "Phone number must contain exactly 9 digits with no letters.";
   }
 
-  // Validate password
   if (fPassword.value.trim() === "" || fPassword.value.length < 4 || fPassword.value.length > 8 || !/(?=.*[A-Za-z])(?=.*\d)/.test(fPassword.value)) {
     error++;
     fPassword.classList.add("is-invalid");
     errorPassword.textContent = "Password must be 4-8 characters and include both letters and numbers.";
   }
 
-  // Validate email
   if (fEmail.value.trim() === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fEmail.value)) {
     error++;
     fEmail.classList.add("is-invalid");
     errorEmail.textContent = "Email must be in a valid format.";
   }
 
-  // Validate address
   if (fAddress.value.trim() === "" || fAddress.value.length < 3) {
     error++;
     fAddress.classList.add("is-invalid");

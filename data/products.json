@@ -2,9 +2,10 @@
   "products": [
     {
       "id": 1,
-      "name": "cooking oil",
+      "name": "Cooking Oil",
       "price": 10.5,
       "type": "grocery",
+      "image": "https://www.compraonline.bonpreuesclat.cat/images-v3/dcbcfd72-cf23-44a2-8e14-8a38edd645a3/0f8e393e-feee-4a76-a3c9-0f158967fa94/350x350.webp",
       "offer": {
         "number": 3,
         "percent": 20
@@ -14,13 +15,15 @@
       "id": 2,
       "name": "Pasta",
       "price": 6.25,
-      "type": "grocery"
+      "type": "grocery",
+      "image": "https://www.compraonline.bonpreuesclat.cat/images-v3/dcbcfd72-cf23-44a2-8e14-8a38edd645a3/7ee8efe6-0f25-419b-a7ff-fb6fec5c7cc1/350x350.webp"
     },
     {
       "id": 3,
-      "name": "Instant cupcake mixture",
+      "name": "Instant Cupcake Mixture",
       "price": 5,
       "type": "grocery",
+      "image": "https://www.compraonline.bonpreuesclat.cat/images-v3/dcbcfd72-cf23-44a2-8e14-8a38edd645a3/d038b6ab-00db-40a6-ae08-bfad1ba7da3f/350x350.webp",
       "offer": {
         "number": 10,
         "percent": 30
@@ -30,37 +33,43 @@
       "id": 4,
       "name": "All-in-one",
       "price": 260,
-      "type": "beauty"
+      "type": "beauty",
+      "image": "https://www.druni.es/media/catalog/product/5/0/5034363.jpg?quality=80&fit=bounds&height=700&width=700&canvas=700:700"
     },
     {
       "id": 5,
       "name": "Zero Make-up Kit",
       "price": 20.5,
-      "type": "beauty"
+      "type": "beauty",
+      "image": "https://www.druni.es/media/catalog/product/3/7/3731276.jpg?quality=80&fit=bounds&height=700&width=700&canvas=700:700"
     },
     {
       "id": 6,
       "name": "Lip Tints",
       "price": 12.75,
-      "type": "beauty"
+      "type": "beauty",
+      "image": "https://www.druni.es/media/catalog/product/6/5/6579.jpg?quality=80&fit=bounds&height=700&width=700&canvas=700:700"
     },
     {
       "id": 7,
-      "name": "Lawn Dress",
+      "name": "Jeans",
       "price": 15,
-      "type": "clothes"
+      "type": "clothes",
+      "image": "https://cdn.artsana.com/assets/chicco/images/09007821000000_085_01_00782108524030001_1280x1280.jpg?ts=1706546024895"
     },
     {
       "id": 8,
-      "name": "Lawn-Chiffon Combo",
+      "name": "Long Sleeve Dress",
       "price": 19.99,
-      "type": "clothes"
+      "type": "clothes",
+      "image": "https://cdn.artsana.com/assets/chicco/images/09007927000000_015_01_00792701524030001_710x710.jpg?ts=1706546978033"
     },
     {
       "id": 9,
       "name": "Toddler Frock",
       "price": 9.99,
-      "type": "clothes"
+      "type": "clothes",
+      "image": "https://cdn.artsana.com/assets/chicco/images/09005449000000_088_01_00544908824010001_1280x1280.jpg?ts=1701710770659"
     }
   ]
 }
