@@ -4,27 +4,43 @@ async function init() {
   try {
     await Shop.loadProducts();
     await loadComponent("components/navbar.html", "navbar");
-    removeNavbarLinks();
+    if (window.location.pathname.includes("checkout.html")) {
+      removeNavbarLinks();
+    }
+
     await loadComponent("components/footer.html", "footer");
     await loadComponent("components/modal.html", "modal");
 
+    loadCartFromLocalStorage();
     Shop.renderProducts();
 
     document.addEventListener("click", (event) => {
       if (event.target.matches(".buy-button-js")) {
+        console.log("Buy button clicked");
         const productId = parseInt(event.target.dataset.productId, 10);
         Shop.buy(productId);
-      }
-
-      if (event.target.matches("#cleancart-btn-js")) {
-        Shop.cleanCart();
+        saveCartToLocalStorage();
       }
 
       if (event.target.matches(".remove-btn-js")) {
         const productId = parseInt(event.target.dataset.productId, 10);
         Shop.removeFromCart(productId);
+        saveCartToLocalStorage();
+      }
+
+      if (event.target.matches("#cleancart-btn-js")) {
+        Shop.cleanCart();
+        saveCartToLocalStorage();
       }
     });
+
+    const orderDetails = document.getElementById("order-details-js");
+    if (orderDetails) {
+      Shop.printOrderDetails();
+    }
+
+    const currentYear = new Date().getFullYear();
+    document.getElementById("current-year").textContent = currentYear;
 
     if (window.location.hash) {
       scrollToHash();
@@ -50,13 +66,24 @@ async function loadComponent(url, elementId) {
   }
 }
 
-// Remove navbar links on checkout page
+function saveCartToLocalStorage() {
+  const cart = Shop.getCart();
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function loadCartFromLocalStorage() {
+  const storedCart = localStorage.getItem("cart");
+  if (storedCart) {
+    const cartData = JSON.parse(storedCart);
+    Shop.setCart(cartData);
+  }
+}
+
+// Remove navbar hash links on checkout page
 function removeNavbarLinks() {
-  if (window.location.pathname.includes("checkout.html")) {
-    const homepageLinks = document.getElementById("homepage-links");
-    if (homepageLinks) {
-      homepageLinks.classList.add("d-none");
-    }
+  const homepageLinks = document.querySelectorAll(".hash-link");
+  if (homepageLinks.length > 0) {
+    homepageLinks.forEach((link) => link.classList.add("d-none"));
   }
 }
 

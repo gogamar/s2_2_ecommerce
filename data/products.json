@@ -2,7 +2,7 @@
   "products": [
     {
       "id": 1,
-      "name": "cooking oil",
+      "name": "Cooking Oil",
       "price": 10.5,
       "type": "grocery",
       "image": "https://www.compraonline.bonpreuesclat.cat/images-v3/dcbcfd72-cf23-44a2-8e14-8a38edd645a3/0f8e393e-feee-4a76-a3c9-0f158967fa94/350x350.webp",
@@ -20,7 +20,7 @@
     },
     {
       "id": 3,
-      "name": "Instant cupcake mixture",
+      "name": "Instant Cupcake Mixture",
       "price": 5,
       "type": "grocery",
       "image": "https://www.compraonline.bonpreuesclat.cat/images-v3/dcbcfd72-cf23-44a2-8e14-8a38edd645a3/d038b6ab-00db-40a6-ae08-bfad1ba7da3f/350x350.webp",

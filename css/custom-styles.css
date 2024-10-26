@@ -4,8 +4,82 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
+.text-logo {
+  color: #E74E39;
+  font-weight: 600;
+  letter-spacing: -0.12em;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+h1, h2, h3, h4, h5, h6, .nav-link {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase !important;
+  color: rgba(21, 21, 24, 0.63);
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1.1rem;
+}
+
+h5 {
+  font-size: 1rem;
+}
+
+h6 {
+  font-size: 0.9rem;
+}
+
 .navbar {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #198754;
+  transition: width 0.4s ease, left 0.4s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.product-list-js .card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.product-list-js .card img {
+  transition: transform 0.3s;
+}
+
+.product-list-js .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.product-list-js .card:hover img {
+  transform: scale(1.05);
 }
 
 .image-container {
@@ -24,16 +98,12 @@ body {
 
 .carousel-caption h5 {
   font-size: 1.5rem;
-  /* Adjust font size */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  /* Optional shadow for better contrast */
 }
 
 .carousel-caption p {
   font-size: 1rem;
-  /* Adjust font size */
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  /* Optional shadow for better contrast */
 }
 
 .shopping-cart th {
@@ -44,36 +114,70 @@ body {
   vertical-align: top;
 }
 
-.nav-link {
-  position: relative;
-  /* Necessary for the pseudo-element positioning */
-  color: #000;
-  /* Change to your desired text color */
+.buy-button-js:hover,
+.buy-button-js:active {
+  color: white !important;
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+}
+
+a {
   text-decoration: none;
-  /* Remove default underline */
 }
 
-.nav-link::after {
-  content: "";
-  /* Required for the pseudo-element to appear */
-  position: absolute;
-  left: 50%;
-  /* Start from the middle */
-  bottom: 0;
-  /* Position at the bottom of the text */
-  width: 0;
-  /* Initial width of the underline */
-  height: 2px;
-  /* Thickness of the underline */
-  background-color: #198754;
-  /* Color of the underline (bootstrap success color) */
-  transition: width 0.4s ease, left 0.4s ease;
-  /* Transition effects for smoothness */
+.nav-link:hover,
+section h2:hover {
+  color: #198754;
 }
 
-.nav-link:hover::after {
-  width: 100%;
-  /* Full width on hover */
-  left: 0;
-  /* Shift to the left */
+.nav-item {
+  margin-right: 1.2rem;
+  margin-left: 1.2rem;
+}
+
+.head {
+  color: #198754;
+}
+
+.shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #198754;
+}
+
+.checkout-info {
+  border: 1px solid #198754;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+@keyframes zoomInAnimation {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.zoom-in {
+  animation: zoomInAnimation 0.9s ease forwards;
+}
+
+.product-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.offer-text,
+.in-cart {
+  font-size: 0.8rem;
 }

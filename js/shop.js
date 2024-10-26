@@ -2,13 +2,28 @@ export const Shop = {
   products: [],
   cart: [],
   total: 0,
+  totalItems: 0,
+
+  getCart() {
+    return this.cart;
+  },
+
+  setCart(cartData) {
+    this.cart = Array.isArray(cartData)
+      ? cartData.map((item) => ({
+          ...item,
+          quantity: item.quantity || 1,
+          subtotalWithDiscount: item.subtotalWithDiscount || null,
+        }))
+      : [];
+    this.updateCartState();
+  },
 
   async loadProducts() {
     try {
       const response = await fetch("../data/products.json");
-      if (!response.ok) {
-        throw new Error("Network response not ok");
-      }
+      if (!response.ok) throw new Error("Network response not ok");
+
       const data = await response.json();
       this.products = data.products;
       console.log("Products loaded:", this.products);
@@ -20,186 +35,204 @@ export const Shop = {
 
   renderProducts() {
     const productLists = document.querySelectorAll(".product-list-js");
-    console.log("product lists", productLists);
 
     productLists.forEach((productList) => {
       const productType = productList.dataset.productType;
-      console.log("product type", productType);
-      productList.innerHTML = "";
+      const filteredProducts = this.products.filter((product) => product.type === productType);
 
-      const filteredProducts = this.products.filter((product) => {
-        return product.type === productType;
-      });
-
-      filteredProducts.forEach((product) => {
-        const productCard = `
-                <div class="col mb-5">
-                    <div class="card h-100">
-                      <div class="image-container">
-                          <img class="card-img-top" src="${product.image}" alt="${product.name}" />
-                      </div>
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <h5 class="fw-bolder">${product.name}</h5>
-                                $${product.price.toFixed(2)}
-                                ${product.offer ? `<div class="text-danger">Offer: Buy ${product.offer.number} for ${product.offer.percent}% off</div>` : ""}
-                            </div>
-                        </div>
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center">
-                                <button type="button" class="btn btn-outline-dark buy-button-js" data-product-id="${product.id}">Add to cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        productList.innerHTML += productCard;
-      });
-
-      if (filteredProducts.length === 0) {
-        productList.innerHTML = "<p>No products found for this category.</p>";
-      }
+      productList.innerHTML = filteredProducts.length ? filteredProducts.map(this.createProductCard.bind(this)).join("") : "<p>No products found for this category.</p>";
     });
+  },
+
+  createProductCard(product) {
+    let itemInCart;
+    if (this.cart.length > 0) {
+      itemInCart = this.cart.find((item) => product.id === item.id);
+    }
+
+    return `
+      <div class="col mb-5">
+        <div class="card h-100 py-3" id="${product.id}">
+          <div class="image-container">
+            <img class="card-img-top" src="${product.image}" alt="${product.name}" />
+          </div>
+          <div class="card-body p-2 text-center">
+            <p class="product-name">${product.name}</p>
+            $${product.price.toFixed(2)}
+            ${product.offer ? `<div class="text-danger offer-text">Buy ${product.offer.number} for ${product.offer.percent}% off</div>` : ""}
+          </div>
+          <div class="card-footer p-2 pt-0 border-top-0 bg-transparent text-center">
+            ${itemInCart ? `<small class="text-muted in-cart">You have ${itemInCart.quantity} in the cart.</small>` : ""}
+            <button type="button" class="btn btn-outline-success buy-button-js" data-product-id="${product.id}">
+              <i class="fas fa-plus"></i> Add to cart
+            </button>
+          </div>
+        </div>
+      </div>`;
   },
 
   buy(id) {
     const product = this.products.find((prod) => prod.id === id);
+    if (!product) return console.error("Product not found");
 
-    if (!product) {
-      console.error("Product not found");
-      return;
-    }
     const cartItem = this.cart.find((item) => item.id === id);
+    cartItem ? cartItem.quantity++ : this.cart.push({ ...product, quantity: 1 });
 
-    if (cartItem) {
-      cartItem.quantity++;
+    this.updateCartState();
+    this.updateInCartMessage(product.id, cartItem ? cartItem.quantity : 1);
+  },
+
+  removeFromCart(id) {
+    const cartItem = this.cart.find((item) => item.id === id);
+    if (!cartItem) return console.log("Product not found in the cart.");
+
+    cartItem.quantity > 1 ? cartItem.quantity-- : (this.cart = this.cart.filter((item) => item.id !== id));
+    this.updateCartState();
+    if (cartItem.quantity === 0) return;
+    this.updateInCartMessage(cartItem.id, cartItem.quantity);
+  },
+
+  updateInCartMessage(product_id, quantity) {
+    const productCard = document.getElementById(product_id);
+    const inCartMessage = productCard.querySelector(".in-cart");
+
+    if (inCartMessage) {
+      inCartMessage.textContent = `You have ${quantity} in the cart.`;
     } else {
-      this.cart.push({ ...product, quantity: 1 });
+      const message = document.createElement("small");
+      message.classList.add("text-muted", "in-cart");
+      message.textContent = `You have ${quantity} in the cart.`;
+      const button = productCard.querySelector(".buy-button-js");
+      productCard.querySelector(".card-footer").insertBefore(message, button);
     }
+  },
 
-    this.updateProductCount();
+  updateCartState() {
     this.applyPromotionsCart();
     this.calculateTotal();
+    this.updateProductCount();
     this.printCart();
-  },
-
-  updateProductCount() {
-    const totalProducts = this.cart.reduce((total, item) => total + item.quantity, 0);
-    const countProductField = document.getElementById("count_product");
-    countProductField.textContent = totalProducts;
-  },
-
-  calculateTotal() {
-    this.total = 0;
-
-    this.cart.forEach((item) => {
-      const price = parseFloat(item.price);
-      const quantity = parseInt(item.quantity, 10);
-      const subtotal = item.subtotalWithDiscount || price * quantity;
-
-      this.total += isNaN(price) ? 0 : subtotal;
-    });
-
-    console.log("Total price:", this.total.toFixed(2));
-    return this.total.toFixed(2);
   },
 
   applyPromotionsCart() {
     this.cart.forEach((item) => {
-      if (item.offer) {
-        const { number, percent } = item.offer;
-        let discountedPrice = item.price;
-
-        if (item.quantity >= number) {
-          discountedPrice *= (100 - percent) / 100;
-        }
-
-        item.subtotalWithDiscount = parseFloat((discountedPrice * item.quantity).toFixed(2));
+      if (item.offer && item.quantity >= item.offer.number) {
+        const discountFactor = (100 - item.offer.percent) / 100;
+        item.subtotalWithDiscount = parseFloat((item.price * discountFactor * item.quantity).toFixed(2));
+      } else {
+        item.subtotalWithDiscount = null;
       }
     });
-
-    console.log("Cart after promotions:", this.cart);
   },
 
-  cleanCart() {
-    this.cart = [];
-    this.total = 0;
-    this.printCart();
-    console.log("Cart has been cleared.", this.cart);
+  calculateTotal() {
+    this.total = this.cart.reduce((total, item) => {
+      const itemSubtotal = item.subtotalWithDiscount || item.price * item.quantity;
+      return total + itemSubtotal;
+    }, 0);
+  },
+
+  updateProductCount() {
+    this.totalItems = this.cart.reduce((total, item) => total + item.quantity, 0);
+    const countProductField = document.getElementById("count_product");
+    if (countProductField) countProductField.textContent = this.totalItems;
   },
 
   printCart() {
     const cartList = document.getElementById("cart-list");
+    const currentCartItems = new Set(this.cart.map((item) => item.id));
+
     this.cart.forEach((item) => {
       const subtotal = item.subtotalWithDiscount || (item.price * item.quantity).toFixed(2);
-
       let itemRow = cartList.querySelector(`div[data-item-id="${item.id}"]`);
+
       if (itemRow) {
-        console.log("item exists");
         itemRow.querySelector("input.form-control").value = item.quantity;
         itemRow.querySelector(".subtotal").textContent = `$${subtotal}`;
       } else {
-        console.log("creating new item");
         const newRow = document.createElement("div");
         newRow.setAttribute("data-item-id", item.id);
         newRow.classList.add("row", "py-2", "border-bottom");
 
         newRow.innerHTML = `
-                <div class="col">${item.name}</div>
-                <div class="col">$${item.price.toFixed(2)}</div>
-                <div class="col">
-                    <div class="input-group input-group-sm">
-                        <button type="button" class="btn btn-outline-secondary remove-btn-js" data-product-id="${item.id}" aria-label="Remove item">
-                            <span class="pe-none"><i class="fas fa-minus"></i></span>
-                        </button>
-                        <input type="text" class="form-control text-center" value="${item.quantity}" readonly />
-                        <button type="button" class="btn btn-outline-secondary buy-button-js" data-product-id="${item.id}" aria-label="Add item">
-                            <span class="pe-none"><i class="fas fa-plus"></i></span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col subtotal">$${subtotal}</div>
-            `;
+          <div class="col">${item.name}</div>
+          <div class="col">$${item.price.toFixed(2)}</div>
+          <div class="col">
+            <div class="input-group input-group-sm">
+              <button type="button" class="btn btn-outline-secondary remove-btn-js" data-product-id="${item.id}" aria-label="Remove item">
+                <span class="pe-none"><i class="fas fa-minus"></i></span>
+              </button>
+              <input type="text" class="form-control text-center" value="${item.quantity}" readonly />
+              <button type="button" class="btn btn-outline-secondary buy-button-js" data-product-id="${item.id}" aria-label="Add item">
+                <span class="pe-none"><i class="fas fa-plus"></i></span>
+              </button>
+            </div>
+          </div>
+          <div class="col subtotal">$${subtotal}</div>
+        `;
         cartList.appendChild(newRow);
       }
-      document.getElementById("total-price").textContent = this.total.toFixed(2);
     });
 
+    cartList.querySelectorAll("div[data-item-id]").forEach((element) => {
+      const itemId = parseInt(element.getAttribute("data-item-id"), 10);
+      if (!currentCartItems.has(itemId)) {
+        element.remove();
+      }
+    });
+
+    const totalPriceField = document.getElementById("total-price");
+    if (totalPriceField) totalPriceField.textContent = this.total.toFixed(2);
+
     this.updateCartVisibility();
+
+    if (document.getElementById("order-details-js")) {
+      this.printOrderDetails();
+    }
   },
 
-  removeFromCart(id) {
-    const productIndex = this.cart.findIndex((item) => item.id === id);
+  printOrderDetails() {
+    const orderDetails = document.getElementById("order-details-js");
+    const orderQuantity = document.getElementById("order-quantity-js");
+    const totalOrder = document.getElementById("order-total-js");
 
-    if (productIndex >= 0) {
-      const product = this.cart[productIndex];
+    orderQuantity.textContent = this.totalItems;
 
-      if (product.quantity > 1) {
-        product.quantity--;
-        console.log("Product quantity updated:", product.quantity);
+    this.cart.forEach((item) => {
+      const subtotal = item.subtotalWithDiscount || (item.price * item.quantity).toFixed(2);
+
+      let listItem = orderDetails.querySelector(`li[data-item-id="${item.id}"]`);
+
+      if (listItem) {
+        listItem.querySelector("small.text-muted").textContent = `Quantity: ${item.quantity}`;
+        listItem.querySelector("span.text-muted").textContent = `$${subtotal}`;
       } else {
-        this.cart.splice(productIndex, 1);
-      }
+        const itemHTML = `
+          <li class="list-group-item d-flex justify-content-between lh-sm" data-item-id="${item.id}">
+            <div>
+              <h6 class="my-0">${item.name}</h6>
+              <small class="text-muted">Quantity: ${item.quantity}</small>
+            </div>
+            <span class="text-muted">$${subtotal}</span>
+          </li>
+        `;
 
-      this.updateProductCount();
-      this.applyPromotionsCart();
-      this.calculateTotal();
-      this.printCart();
-    } else {
-      console.log("Product not found in the cart.");
-    }
+        orderDetails.insertAdjacentHTML("beforeend", itemHTML);
+      }
+    });
+    totalOrder.textContent = `$${this.total.toFixed(2)}`;
+  },
+
+  cleanCart() {
+    this.cart = [];
+    this.updateCartState();
   },
 
   updateCartVisibility() {
     const isCartEmpty = this.cart.length === 0;
-    const cartContent = document.getElementById("cart-content-js");
-    const backToShop = document.getElementById("back-to-shop-js");
-    const checkoutButton = document.getElementById("checkout-btn-js");
-    const cleanCartButton = document.getElementById("cleancart-btn-js");
-
-    cartContent.classList.toggle("d-none", isCartEmpty);
-    backToShop.classList.toggle("d-none", !isCartEmpty);
-    checkoutButton.classList.toggle("d-none", isCartEmpty);
-    cleanCartButton.classList.toggle("d-none", isCartEmpty);
+    document.getElementById("cart-content-js")?.classList.toggle("d-none", isCartEmpty);
+    document.getElementById("back-to-shop-js")?.classList.toggle("d-none", !isCartEmpty);
+    document.getElementById("checkout-btn-js")?.classList.toggle("d-none", isCartEmpty);
+    document.getElementById("cleancart-btn-js")?.classList.toggle("d-none", isCartEmpty);
   },
 };
