@@ -15,6 +15,8 @@ function validate() {
   const errorEmail = document.getElementById("errorEmail");
   const errorAddress = document.getElementById("errorAddress");
 
+  const form = document.querySelector("form");
+
   // Clear previous error messages and styles
   [fName, fLastName, fPhone, fPassword, fEmail, fAddress].forEach((field) => {
     field.classList.remove("is-invalid");
@@ -31,31 +33,37 @@ function validate() {
     error++;
     fPhone.classList.add("is-invalid");
     errorPhone.textContent = "Phone number must contain exactly 9 digits with no letters.";
+  } else {
+    fPhone.classList.add("is-valid");
   }
 
   if (fPassword.value.trim() === "" || fPassword.value.length < 4 || fPassword.value.length > 8 || !/(?=.*[A-Za-z])(?=.*\d)/.test(fPassword.value)) {
     error++;
     fPassword.classList.add("is-invalid");
     errorPassword.textContent = "Password must be 4-8 characters and include both letters and numbers.";
+  } else {
+    fPassword.classList.add("is-valid");
   }
 
   if (fEmail.value.trim() === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fEmail.value)) {
     error++;
     fEmail.classList.add("is-invalid");
     errorEmail.textContent = "Email must be in a valid format.";
+  } else {
+    fEmail.classList.add("is-valid");
   }
 
   if (fAddress.value.trim() === "" || fAddress.value.length < 3) {
     error++;
     fAddress.classList.add("is-invalid");
     errorAddress.textContent = "Address must be at least 3 characters long.";
+  } else {
+    fAddress.classList.add("is-valid");
   }
 
-  const form = document.querySelector("form");
-  if (error > 0) {
-    form.classList.add("was-validated");
-  } else {
+  if (error === 0) {
     form.submit();
+    form.classList.add("was-validated");
   }
 }
 
@@ -66,6 +74,9 @@ function validateName(field, errorElement, fieldName) {
     errorIncrement++;
     field.classList.add("is-invalid");
     errorElement.textContent = `${fieldName} must have at least 3 characters and contain only letters.`;
+  } else {
+    field.classList.add("is-valid");
   }
+
   return errorIncrement;
 }
