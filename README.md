@@ -1,66 +1,73 @@
-# Sprint 2 IT Academy | Shop
+# Simple E-Commerce Demo Application
 
 ## Introduction
 
-A company in the e-commerce sector has asked us for a web application that allows them to offer the purchase of their products through the internet.
-
-You will be in charge of setting up an initial demo version of the application for the client: management of the shopping cart and the application of the promotions on the final price. You have 1 week to finish this part of sprint (2.2).
-
-<br>
+This is a demo e-commerce application showcasing basic shopping cart functionality, promotions, and checkout validation. Built with JavaScript and HTML, this project can be run locally using Visual Studio Code's Live Server extension.
 
 ## Requirements
 
+### Clone this repository
 
-1. Clone this repo
-```bash
-$ git clone https://github.com/IT-Academy-BCN/starter-code-frontend-shop
-```
-
-2. Unlink your repo from the itacademy repository.
-(Explanation: You have to upload the code to your GitHub repository, not to the IT Academy. That's why you have to unlink your project from IT Academy GitHub with the following command)
+To get started, clone this repository:
 
 ```bash
-$ git remote rm origin
+$ git clone https://github.com/gogamar/s2_2_ecommerce.git
 ```
 
-3. Link your repo to the repository you have to create in your github account
-(Explanation: Now your project is not linked to any remote repository. In order to upload your code, you have to link your project to the new repository created on github.com using the following command)
+### Open in Visual Studio Code
 
-```bash
-$ git remote add origin <your repo name!>
-```
+1. Open the project folder in [Visual Studio Code](https://code.visualstudio.com/).
+2. Install the **Live Server** extension in VS Code if it is not already installed.
 
-<br>
+### Run the Application
 
-## Submission
+1. Right-click on the `index.html` file in the file explorer.
+2. Select **"Open with Live Server"**. This will launch the application in your default web browser.
+3. The application will reload automatically with each code update, thanks to Live Server.
 
-1. It is necessary to upload each exercise in a separate commit. The commit name must clearly indicate its content.
+## Features
 
-2. Upload the link to your GitHub repository to the virtual campus, enabling your mentor to review and provide feedback.
+### 1. **Add Products to Cart**
 
+- Users can add products to their cart by clicking the blue button on each product.
+- When a product is added:
+  - If it's not already in the cart, it is added with a quantity of 1.
+  - If it’s already in the cart, its quantity is increased by 1.
 
+### 2. **Clear Cart**
 
-<br>
+- Users can empty their cart using the `cleanCart()` function, resetting all items in the cart.
 
-## Introduction
+### 3. **Calculate Total Price**
 
-The statement of the exercise is available on the virtual campus.
+- The application calculates the total amount by iterating through all items in the cart.
 
-<br>
+### 4. **Apply Promotions**
 
+- Two promotions are applied dynamically:
+  - **20% discount** on oils if 3 or more bottles are purchased.
+  - **30% discount** on baking products if 10 or more items are purchased.
+- The `applyPromotionsCart()` function checks eligibility and adjusts the total price accordingly.
 
-## Instructions
+### 5. **Display Cart**
 
-You have the following indications from the frontend manager:
+- The `printCart()` function dynamically updates the cart modal (`cartModal`) to show current items in the cart.
 
-- You have prepared the base of the project on which you will work: https://github.com/IT-Academy-BCN/starter-code-frontend-shop
+### 6. **Checkout Form Validation**
 
-- The base of the project on which you will work has already created all the files, and an initial version of the interface, so you can focus on programming the logic.
+- Checkout validation logic is handled in `checkout.js` and includes:
+  - All fields are required and must have at least 3 characters.
+  - Name and surname fields accept only letters.
+  - Phone field accepts only numbers.
+  - Password must contain letters and numbers.
+  - Email must have a valid email format.
+- If any field fails validation, it is highlighted in red with an error message.
 
-- As at the moment we don't consume data from a server using an API, we will work with hardcoded data in the application. For the moment we will implement the logic using a small group of 9 products divided in 3 sections.
+### 7. **Remove Products from Cart**
 
-- Except for the last level, showing the result of the functions by console is enough.
+- Users can decrease the quantity of items in the cart with `removeFromCart()`.
+- If a product’s quantity reaches 1 and is decreased, it is removed from the cart. Promotions are updated accordingly.
 
-- The logic to implement will be placed in the src/grocery.js and src/checkout.js files. You will see that the built in functions have already been created for you to implement them.
+### 8. **Styling**
 
-- It is forbidden to copy the code, since this way you don't learn anything. Furthermore, as you can see, the second release of sprint 5 is a mini-level test with the mentor, in which you will have to demonstrate live that you have acquired the javascript concepts. Don't worry, if you work on the releases you won't have any problems.
+- The application is styled to provide a professional appearance suitable for client demonstrations.
